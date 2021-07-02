@@ -45,6 +45,53 @@ For the successful run of this project we need to do the following prework:
 12. Install Chromedriver: https://sites.google.com/a/chromium.org/chromedriver/downloads
 
 ## Configure storage account and state backend for Terraform
+Terraform state is used to reconcile deployed resources with Terraform configurations. State allows Terraform to know what Azure resources to add, update, or delete. By default, Terraform state is stored locally when you run the terraform ```apply``` command. This configuration isn't ideal for the following reasons:
+
+Local state doesn't work well in a team or collaborative environment.
+Terraform state can include sensitive information.
+Storing state locally increases the chance of inadvertent deletion.
+Terraform supports the persisting of state in remote storage. One such supported back end is Azure Storage. This document shows how to configure and use Azure Storage for this purpose.
+
+For the project we will use Azure Storage for persisting the Terraform state in remote storage. For this we will run the ```terraformconfig.sh``` file, which has the necessary configuration files for creating a blob storage to store the state.
+
+First, we have to ensure we are logged in into Azure CLI by running the following command:
+```Bash
+az login
+```
+
+Once that's done, we can run the ```terraformconfig.sh``` file with the following command:
+```Bash
+sh terraformconfig.sh
+```
+
+We will get 3 outputs:
+- storage_account_name
+- container_name 
+- access_key
+
+We will use this fields, plus a ```key``` field we will define as ```test.terraform.tfstate```
+
+The access_key can be sourced from an Environment Variable, the environment variables that can be used with the Azure provider must have the “ARM” prefix, 
+To do this open the Terminal and write the following command:
+```Bash
+export ARM_ACCESS_KEY="your_access_key" (Unix Systems)
+
+setx ARM_ACCESS_KEY="your_access_key" (Windows Systems)
+```
+
+In the ```main.tf``` in the ```environments\test``` directory input the following fields:
+```Bash
+terraform {
+  backend "azurerm" {
+    storage_account_name = "your_storage_account_name"
+    container_name       = "your_container_name"
+    key                  = "test.terraform.tfstate"
+    access_key           = "ARM_ACCESS_KEY"
+  }
+}
+```
+
+
 
 
 ## Create a Service Principal for Terraform
@@ -63,5 +110,6 @@ For the successful run of this project we need to do the following prework:
 - [Jmeter](https://jmeter.apache.org/download_jmeter.cgi)
 - [Postman](https://www.postman.com/downloads/)
 - [Python](https://www.python.org/downloads/)
-- [Selenium](https://pypi.org/project/selenium/)
+- [Selenium for Python](https://pypi.org/project/selenium/)
 - [Chromedriver](https://sites.google.com/a/chromium.org/chromedriver/downloads)
+- [Tutorial: Store Terraform state in Azure Storage](https://docs.microsoft.com/en-us/azure/developer/terraform/store-state-in-azure-storage)
