@@ -7,9 +7,9 @@ provider "azurerm" {
 }
 terraform {
   backend "azurerm" {
-    storage_account_name = "tstate19206"
-    container_name       = "tstate"
-    key                  = "test.terraform.tfstate"
+    storage_account_name = ""
+    container_name       = ""
+    key                  = ""
     access_key           = ""
   }
 }
@@ -56,7 +56,7 @@ module "vm" {
   source               = "../../modules/vm"
   location             = "${var.location}"
   resource_group       = module.resource_group.resource_group_name
-  subnet_id            = module.network.subnet_id_main
+  subnet_id            = module.network.subnet_id_test
   public_ip_address_id = module.publicip.public_ip_address_id 
   admin_username       = var.admin_username
   prefix               = var.prefix

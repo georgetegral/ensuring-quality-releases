@@ -1,3 +1,2 @@
 .terraform
 azurecreds.conf
-terraform.tfvars
