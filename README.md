@@ -71,30 +71,71 @@ We will get 3 outputs:
 
 We will use this fields, plus a ```key``` field we will define as ```test.terraform.tfstate```
 
-The access_key can be sourced from an Environment Variable, the environment variables that can be used with the Azure provider must have the “ARM” prefix, 
-To do this open the Terminal and write the following command:
-```Bash
-export ARM_ACCESS_KEY="your_access_key" (Unix Systems)
+we will store this 4 values on a file named ```azurecreds.conf``` and in a ```.gitignore``` file we will write the file name so that it isn't stored in our repository.
 
-setx ARM_ACCESS_KEY="your_access_key" (Windows Systems)
 ```
-
 In the ```main.tf``` in the ```environments\test``` directory input the following fields:
 ```Bash
 terraform {
   backend "azurerm" {
-    storage_account_name = "your_storage_account_name"
-    container_name       = "your_container_name"
-    key                  = "test.terraform.tfstate"
-    access_key           = "ARM_ACCESS_KEY"
+    storage_account_name = ""
+    container_name       = ""
+    key                  = ""
+    access_key           = ""
   }
 }
 ```
 
-
-
-
 ## Create a Service Principal for Terraform
+In the ```main.tf``` file we need the following data:
+- tenant_id
+- subscription_id
+- client_id
+- client_secret
+
+For this we have to obtain our subscription_id with the followging command:
+
+```Bash
+az account show
+```
+
+Copy the "id" field. Now it is time to create the service principal, input the following command:
+
+```Bash
+az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/your-subscription-id"
+```
+
+We will get an output similar to this:
+```Bash
+{
+  "appId": "00000000-0000-0000-0000-000000000000",
+  "displayName": "azure-cli-2017-06-05-10-41-15",
+  "name": "9d778b04-cfbe-4f86-947e-000000000000",
+  "password": "0000-0000-0000-0000-000000000000",
+  "tenant": "00000000-0000-0000-0000-000000000000"
+}
+```
+
+These values map to the Terraform variables like so:
+
+- appId is the client_id defined above.
+- password is the client_secret defined above.
+- tenant is the tenant_id defined above.
+
+We will add this values to our ```azurecreds.conf``` file, so at the end we will have data similar to this in our conf file:
+```Bash
+subscription_id = "12345678-b866-4328-925f-123456789"
+client_id = "00000000-0000-0000-0000-000000000000"
+client_secret = "0000-0000-0000-0000-000000000000"
+tenant_id = "00000000-0000-0000-0000-000000000000"
+
+storage_account_name = "tstate12345"
+container_name = "tstate"
+key = "test.terraform.tfstate"
+access_key = "qwewqeDddsad13334324asdd7IuD4RK21jNFWq4XUwAQyYtxxneepnXxLWk49OYvTEoPydmRclPEwSBRrrreqr=="
+```
+
+We are now ready to configure an Azure DevOps Pipeline.
 
 
 ## References
@@ -113,3 +154,5 @@ terraform {
 - [Selenium for Python](https://pypi.org/project/selenium/)
 - [Chromedriver](https://sites.google.com/a/chromium.org/chromedriver/downloads)
 - [Tutorial: Store Terraform state in Azure Storage](https://docs.microsoft.com/en-us/azure/developer/terraform/store-state-in-azure-storage)
+- [Get subscription id with Azure CLI](https://yourazurecoach.com/2020/07/14/get-subscription-id-with-azure-cli/)
+- [Azure Provider: Authenticating using a Service Principal with a Client Secret](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/service_principal_client_secret)
