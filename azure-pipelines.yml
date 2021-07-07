@@ -91,7 +91,7 @@ stages:
       displayName: Publish FakeRestAPI artifact
       inputs:
         targetPath: '$(Build.ArtifactStagingDirectory)/fakerestapi-$(Build.BuildId).zip'
-        artifactName: 'artifact-fakerestapi'
+        artifactName: 'drop-fakerestapi'
 
     - task: ArchiveFiles@2
       displayName: Archive Selenium
@@ -105,11 +105,11 @@ stages:
       displayName: Publish Selenium artifact
       inputs:
         targetPath: '$(Build.ArtifactStagingDirectory)/selenium-$(Build.BuildId).zip'
-        artifactName: 'artifact-selenium'
+        artifactName: 'drop-selenium'
 
 - stage: Deploy
   jobs:
-  - deployment: deployment_fakerestapi
+  - deployment: deploy_fakerestapi
     displayName: Deploy FakeRestAPI
     pool:
       vmImage: 'ubuntu-18.04'
@@ -118,16 +118,16 @@ stages:
       runOnce:
         deploy:
           steps:
-          - task: AzureWebApp@1
-            displayName: Deploy Azure WebApp
+          - task: AzureRmWebAppDeployment@4
             inputs:
+              ConnectionType: 'AzureRM'
               azureSubscription: 'azurerm-sc'
-              appName: 'udacitytest-AppService'
-              appType: webApp
-              package: $(Pipeline.Workspace)/artifact-fakerestapi/fakerestapi-$(Build.BuildId).zip
-              deploymentMethod: zipDeploy
+              appType: 'webApp'
+              WebAppName: 'udacitytest-AppService'
+              packageForLinux: '$(Pipeline.Workspace)/drop-fakerestapi/fakerestapi-$(Build.BuildId).zip'
+              DeploymentType: zipDeploy
 
-  - deployment: vmdeploy
+  - deployment: VMDeploy
     displayName: Deploy Virtual Machine
     environment:
       name: 'TEST'
@@ -176,7 +176,7 @@ stages:
         deploy:
           steps:
           - bash: |
-              cd $(Pipeline.Workspace)/artifact-selenium
+              cd $(Pipeline.Workspace)/drop-selenium
               find . -type f ! -name 'selenium-$(Build.BuildId).zip' -delete  # delete everything except 'selenium-$(Build.BuildId).zip'
               unzip -o selenium-$(Build.BuildId).zip
               pwd
@@ -195,7 +195,7 @@ stages:
             displayName: Publish selenium logs
             inputs:
               targetPath: '$(System.DefaultWorkingDirectory)/log/selenium/selenium-test.log'
-              artifactName: 'artifact-selenium-logs'
+              artifactName: 'drop-selenium-logs'
 
   - job: test_jmeter
     displayName: Test JMeter
@@ -252,7 +252,7 @@ stages:
       displayName: Publish JMeter logs
       inputs:
         targetPath: '$(System.DefaultWorkingDirectory)/log/jmeter'
-        artifactName: 'artifact-jmeter-logs'
+        artifactName: 'drop-jmeter-logs'
 
   - job: test_newman
     displayName: Test Postman (using Newman CLI)
@@ -289,7 +289,7 @@ stages:
       displayName: Publish Newman logs
       inputs:
         targetPath: '$(System.DefaultWorkingDirectory)/log/newman'
-        artifactName: 'artifact-newman-logs'
+        artifactName: 'drop-newman-logs'
     - task: PublishTestResults@2
       displayName: 'Publish Newman test results'
       inputs:
