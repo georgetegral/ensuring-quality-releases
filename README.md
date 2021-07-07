@@ -143,11 +143,18 @@ We will need to install Terraform extension from Microsoft DevLabs to use terraf
 Now we need to create a new Service Connection in the Project by going to Project Settings -> Service connections -> New service connection -> Azure Resource Manager -> Service Principal (Automatic) -> Choose the subscription -> Choose the resource (group where the storage account was created) -> Name the new service connection to Azure Resource Manager as ```azurermsc```.
 This service connection will be used in the ```azure-pipelines.yml``` file.
 
-The next step is to upload our ```azurecreds.conf``` to Azure Devops as a Secure File, to do this we have to navigate to Pipelines -> Library -> Secure Files -> + Secure File -> Upload File. Now the file should be uploaded
+The next step is to upload our ```azurecreds.conf``` to Azure Devops as a Secure File, to do this we have to navigate to Pipelines -> Library -> Secure Files -> + Secure File -> Upload File. Now the file should be uploaded.
 
 Further ahead when the pipeline is created, remember to go into the "Pipeline permissions" menu by clicking in the file name in the "Secure Files" menu and add add the pipeline that we will be using.
 
-![Secure File](images/securefile.PNG)
+To access the VM that Terraform creates we will need to also upload to Secure Files a private key, and in the private key add a property for the public key and the value.
+
+Our secure files should look something like this, in this case the private key is named id_rsa.
+![Secure Files](images/securefiles.PNG)
+
+And our Private Key Secure File Properties should look like this.
+![Private Key Properties](images/securefileproperties.PNG)
+
 
 ## References
 - [Udacity Project Starter Files](https://video.udacity-data.com/topher/2020/June/5ed815bf_project-starter-resources/project-starter-resources.zip)
