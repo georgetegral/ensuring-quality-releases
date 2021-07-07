@@ -33,13 +33,16 @@ stages:
       inputs:
         terraformVersion: '1.0.1'
     
-    #Terraform Init Bash
-    - bash: terraform init -backend-config=$(azurecreds.secureFilePath)
+    - script: az account show
+      displayName: Az Account Show
+
+    #Terraform Init script
+    - script: terraform init -backend-config=$(azurecreds.secureFilePath)
       displayName: Terraform Init
       workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
     
-    #Terraform Apply bash
-    - bash: terraform apply -auto-approve
+    #Terraform Apply script
+    - script: terraform apply -auto-approve
       displayName: Terraform Apply
       workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
       env:
