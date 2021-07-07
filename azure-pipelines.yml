@@ -72,55 +72,282 @@ stages:
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: 'azurerm-sc'
 
-- stage: Destroy
+- stage: Build
   jobs:
-  - job: destroy_azure_infrastructure
-    displayName: Destroy Azure Infrastructure
+  - job: build_artifacts
+    displayName: Build Artifacts
     pool:
       vmImage: 'ubuntu-18.04'
     steps:
-    
-    #Download azurecreds.conf File
-    - task: DownloadSecureFile@1
-      displayName: Download azurecreds.conf file
-      name: azurecreds
+    - task: ArchiveFiles@2
+      displayName: Archive FakeRestAPI
       inputs:
-        secureFile: 'azurecreds.conf'
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/fakerestapi'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/fakerestapi-$(Build.BuildId).zip'
 
-    # Install SSH Key for VM
-    - task: InstallSSHKey@0
-      displayName: Install SSH key
+    - task: PublishPipelineArtifact@1
+      displayName: Publish FakeRestAPI artifact
       inputs:
-        knownHostsEntry: 'known_hosts'
-        sshPublicKey: $(public_key)
-        sshKeySecureFile: 'id_rsa'
+        targetPath: '$(Build.ArtifactStagingDirectory)/fakerestapi-$(Build.BuildId).zip'
+        artifactName: 'artifact-fakerestapi'
 
-    #Terraform Install
-    - task: TerraformInstaller@0
-      displayName: Terraform Install
+    - task: ArchiveFiles@2
+      displayName: Archive Selenium
       inputs:
-        terraformVersion: '1.0.1'
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/selenium'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/selenium-$(Build.BuildId).zip'
 
-    #Terraform Init
-    - task: TerraformTaskV2@2
-      displayName: Terraform Init
+    - task: PublishPipelineArtifact@1
+      displayName: Publish Selenium artifact
       inputs:
-        provider: 'azurerm'
-        command: 'init'
-        commandOptions: '-backend-config=$(azurecreds.secureFilePath)'
-        backendServiceArm: 'azurerm-sc'
-        backendAzureRmResourceGroupName: 'tstate'
-        backendAzureRmStorageAccountName: 'tstate19206'
-        backendAzureRmContainerName: 'tstate'
-        backendAzureRmKey: 'test.terraform.tfstate'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+        targetPath: '$(Build.ArtifactStagingDirectory)/selenium-$(Build.BuildId).zip'
+        artifactName: 'artifact-selenium'
 
-    - task: TerraformTaskV2@2
-      displayName: Terraform Destroy
+- stage: Deploy
+  jobs:
+  - deployment: deployment_fakerestapi
+    displayName: Deploy FakeRestAPI
+    pool:
+      vmImage: 'ubuntu-18.04'
+    environment: 'TEST'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureWebApp@1
+            displayName: Deploy Azure WebApp
+            inputs:
+              azureSubscription: 'azurerm-sc'
+              appName: 'udacitytest-AppService'
+              appType: webApp
+              package: $(Pipeline.Workspace)/artifact-fakerestapi/fakerestapi-$(Build.BuildId).zip
+              deploymentMethod: zipDeploy
+
+  - deployment: vmdeploy
+    displayName: Deploy Virtual Machine
+    environment:
+      name: 'TEST'
+      resourceType: VirtualMachine
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - bash: |
+              pwd
+              hostname
+              uname -a
+              cat /etc/*-release
+              sudo apt-get install software-properties-common -y
+              sudo apt-add-repository universe -y
+              sudo apt-get update -y
+              sudo apt-get install python3-pip -y
+              sudo apt-get install unzip -y
+              sudo apt-get install -y chromium-browser
+              sudo apt-get install -y chromium-chromedriver
+              python3 -m pip install --upgrade pip
+              pip3 install selenium
+              python3 -V
+              pip3 -V
+              /usr/bin/chromium-browser --version
+              /usr/bin/chromedriver --version
+              python3 -c "import selenium; print('Selenium Version:', selenium.__version__)"
+              # Install Log Analytics agent on Linux computers (only need to run once)
+              # wget https://raw.githubusercontent.com/Microsoft/OMS-Agent-for-Linux/master/installer/scripts/onboard_agent.sh
+              # sh onboard_agent.sh -w ${AZURE_LOG_ANALYTICS_ID} -s ${AZURE_LOG_ANALYTICS_PRIMARY_KEY}
+              # sudo /opt/microsoft/omsagent/bin/service_control restart ${AZURE_LOG_ANALYTICS_ID}
+            env:  # To use secret variables in a script, we must explicitly map them as environment variables.
+              AZURE_LOG_ANALYTICS_ID: $(AZURE_LOG_ANALYTICS_ID)
+              AZURE_LOG_ANALYTICS_PRIMARY_KEY: $(AZURE_LOG_ANALYTICS_PRIMARY_KEY)
+            displayName: Configure selenium
+
+- stage: Test
+  jobs:
+  - deployment: test_vm
+    displayName: Test on Virtual Machine
+    environment:
+      name: 'TEST'
+      resourceType: VirtualMachine
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - bash: |
+              cd $(Pipeline.Workspace)/artifact-selenium
+              find . -type f ! -name 'selenium-$(Build.BuildId).zip' -delete  # delete everything except 'selenium-$(Build.BuildId).zip'
+              unzip -o selenium-$(Build.BuildId).zip
+              pwd
+              ls -la
+              sudo mkdir -p /var/log/selenium
+              sudo chmod 664 /var/log/selenium
+              sudo python3 -u selenium-test.py 2>&1 | sudo tee -a /var/log/selenium/selenium-test.log
+              # copy selenium log file to $(System.DefaultWorkingDirectory)/log/selenium/
+              cd $(System.DefaultWorkingDirectory)
+              mkdir -p log/selenium
+              pwd
+              sudo cp /var/log/selenium/selenium-test.log log/selenium/selenium-test.log
+              ls -la
+            displayName: Run selenium tests
+          - task: PublishPipelineArtifact@1
+            displayName: Publish selenium logs
+            inputs:
+              targetPath: '$(System.DefaultWorkingDirectory)/log/selenium/selenium-test.log'
+              artifactName: 'artifact-selenium-logs'
+
+  - job: test_jmeter
+    displayName: Test JMeter
+    pool:
+      vmImage: 'ubuntu-18.04'
+    steps:
+    - bash: |
+        sudo apt-get install openjdk-11-jre-headless -y
+        java -version
+        wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.4.tgz -O jmeter.tgz
+        tar xzvf jmeter.tgz
+        apache-jmeter-5.4/bin/jmeter --version
+        # create log directory
+        mkdir -p log/jmeter
+        pwd
+        ls -la
+      displayName: Install JMeter
+    - bash: |
+        apache-jmeter-5.4/bin/jmeter -n -t automatedtesting/jmeter/stress-test.jmx \
+                                     -l log/jmeter/stress-test-result.csv \
+                                     -e -f -o log/jmeter/stress-test-html-report \
+                                     -j log/jmeter/jmeter-stress-test.log
+      displayName: JMeter stress test
+    - bash: |
+        apache-jmeter-5.4/bin/jmeter -n -t automatedtesting/jmeter/endurance-test.jmx \
+                                     -l log/jmeter/endurance-test-result.csv \
+                                     -e -f -o log/jmeter/endurance-test-html-report \
+                                     -j log/jmeter/jmeter-endurance-test.log
+      displayName: JMeter endurance test
+    - task: ArchiveFiles@2
+      displayName: Archive JMeter stress test HTML report
       inputs:
-        provider: 'azurerm'
-        command: 'destroy'
-        commandOptions: |
-          -auto-approve 
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-        environmentServiceNameAzureRM: 'azurerm-sc'
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/log/jmeter/stress-test-html-report'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(System.DefaultWorkingDirectory)/log/jmeter/stress-test-html-report-$(Build.BuildId).zip'
+        verbose: true
+    - task: ArchiveFiles@2
+      displayName: Archive JMeter endurance test HTML report
+      inputs:
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/log/jmeter/endurance-test-html-report'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(System.DefaultWorkingDirectory)/log/jmeter/endurance-test-html-report-$(Build.BuildId).zip'
+        verbose: true
+    - bash: |
+        rm -rf log/jmeter/stress-test-html-report
+        rm -rf log/jmeter/endurance-test-html-report
+        cd log/jmeter
+        pwd
+        ls -la
+      displayName: Delete original JMeter test HTML reports
+    - task: PublishPipelineArtifact@1
+      displayName: Publish JMeter logs
+      inputs:
+        targetPath: '$(System.DefaultWorkingDirectory)/log/jmeter'
+        artifactName: 'artifact-jmeter-logs'
+
+  - job: test_newman
+    displayName: Test Postman (using Newman CLI)
+    pool:
+      vmImage: 'ubuntu-18.04'
+    steps: 
+    - task: NodeTool@0
+      displayName: Install Node v12.X
+      inputs:
+        versionSpec: '12.x'
+    - bash: |
+        npm install -g newman
+        newman --version
+        # create log directory
+        mkdir -p log/newman
+        pwd
+        ls -la
+      displayName: Install Newman
+    - bash: |
+        newman run automatedtesting/postman/regression-test.json \
+                   --reporters cli,junit \
+                   --reporter-junit-export log/newman/regression-test.xml \
+                   --suppress-exit-code
+      displayName: Newman regression test
+    - bash: |
+        newman run automatedtesting/postman/validation-test.json \
+                   -e automatedtesting/postman/validation-test-env.postman-environment.json \
+                   --reporters cli,junit \
+                   --reporter-junit-export log/newman/validation-test.xml \
+                   --suppress-exit-code
+        ls -la $(System.DefaultWorkingDirectory)/log/newman/
+      displayName: Newman validation test
+    - task: PublishPipelineArtifact@1
+      displayName: Publish Newman logs
+      inputs:
+        targetPath: '$(System.DefaultWorkingDirectory)/log/newman'
+        artifactName: 'artifact-newman-logs'
+    - task: PublishTestResults@2
+      displayName: 'Publish Newman test results'
+      inputs:
+        testRunner: 'JUnit'
+        searchFolder: '$(System.DefaultWorkingDirectory)/log/newman'
+        testResultsFiles: '*.xml'
+        mergeTestResults: true
+        testRunTitle: 'Publish Newman test results'
+
+#- stage: Destroy
+#  jobs:
+#  - job: destroy_azure_infrastructure
+#    displayName: Destroy Azure Infrastructure
+#   pool:
+#    vmImage: 'ubuntu-18.04'
+#    steps:
+#    
+#    #Download azurecreds.conf File
+#    - task: DownloadSecureFile@1
+#      displayName: Download azurecreds.conf file
+#      name: azurecreds
+#      inputs:
+#        secureFile: 'azurecreds.conf'
+#
+#    # Install SSH Key for VM
+#    - task: InstallSSHKey@0
+#      displayName: Install SSH key
+#      inputs:
+#        knownHostsEntry: 'known_hosts'
+#        sshPublicKey: $(public_key)
+#        sshKeySecureFile: 'id_rsa'
+#
+#    #Terraform Install
+#    - task: TerraformInstaller@0
+#      displayName: Terraform Install
+#      inputs:
+#        terraformVersion: '1.0.1'
+#
+#    #Terraform Init
+#    - task: TerraformTaskV2@2
+#      displayName: Terraform Init
+#      inputs:
+#        provider: 'azurerm'
+#        command: 'init'
+#        commandOptions: '-backend-config=$(azurecreds.secureFilePath)'
+#        backendServiceArm: 'azurerm-sc'
+#        backendAzureRmResourceGroupName: 'tstate'
+#        backendAzureRmStorageAccountName: 'tstate19206'
+#        backendAzureRmContainerName: 'tstate'
+#        backendAzureRmKey: 'test.terraform.tfstate'
+#        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+#
+#    - task: TerraformTaskV2@2
+#      displayName: Terraform Destroy
+#      inputs:
+#        provider: 'azurerm'
+#        command: 'destroy'
+#        commandOptions: |
+#          -auto-approve 
+#        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+#        environmentServiceNameAzureRM: 'azurerm-sc'
