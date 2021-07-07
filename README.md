@@ -199,12 +199,15 @@ After that, navigate to the Azure Portal, go to the resource group where the Wor
 
 ![Log Analytics Agents Management](images/loganalyticsagentsmanagement.PNG)
 
-Navigate to Linux Servers and there will be the script to install the Linux Agent in our Virtual Machine that we used in the script.
+Navigate to Linux Servers and there will be the script to install the Linux Agent in our Virtual Machine.
+
+For security, copy the Workspace ID and the Primary Key, set them up in our variables group, and reference them as an Environment variable in the pipeline.
 
 We are ready to run the Deploy stage of the pipeline!
 
 If everything worked as intented, we should see "1 Linux computers connected" in the Agents Management in the Log Analytics Workspace.
 
+![1 Linux Server Connected](images/serverconnected.PNG)
 
 ## References
 - [Udacity Project Starter Files](https://video.udacity-data.com/topher/2020/June/5ed815bf_project-starter-resources/project-starter-resources.zip)
