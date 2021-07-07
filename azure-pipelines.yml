@@ -10,7 +10,18 @@ stages:
       vmImage: 'ubuntu-18.04'
        
     steps:
-       
+    
+    #Step for log in into Azure
+    - task: AzureCLI@2
+      displayName: Azure CLI
+      inputs:
+        azureSubscription: azurermsc
+        scriptType: ps
+        scriptLocation: inlineScript
+        inlineScript: |
+          az --version
+          az account show
+
     #Download azurecreds.conf File
     - task: DownloadSecureFile@1
       displayName: Download azurecreds.conf file
@@ -31,9 +42,6 @@ stages:
       displayName: Terraform Install
       inputs:
         terraformVersion: '1.0.1'
-    
-    - script: az account show
-      displayName: Az Account Show
 
     #Terraform Init
     - task: TerraformTaskV2@2
@@ -48,7 +56,6 @@ stages:
         backendAzureRmContainerName: 'tstate'
         backendAzureRmKey: 'test.terraform.tfstate'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-
 
     #Terraform Apply
     - task: TerraformTaskV2@2
