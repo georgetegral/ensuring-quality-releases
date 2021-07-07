@@ -7,13 +7,12 @@ stages:
   - job: TerraformTasks
     displayName: Terraform Tasks
     pool:
-      vmImage: 'ubuntu-16.04'
+      vmImage: 'ubuntu-18.04'
 
-       
     steps:
     
-    - script: az account show
-      displayName: Az account Show
+    - script: az login --debug
+      displayName: Az login debug
 
     #Download azurecreds.conf File
     - task: DownloadSecureFile@1
