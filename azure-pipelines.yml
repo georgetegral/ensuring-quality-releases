@@ -93,19 +93,19 @@ stages:
         targetPath: '$(Build.ArtifactStagingDirectory)/fakerestapi-$(Build.BuildId).zip'
         artifactName: 'drop-fakerestapi'
 
-#    - task: ArchiveFiles@2
-#      displayName: Archive Selenium
-#      inputs:
-#        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/selenium'
-#        includeRootFolder: false
-#        archiveType: 'zip'
-#        archiveFile: '$(Build.ArtifactStagingDirectory)/selenium-$(Build.BuildId).zip'
-#
-#    - task: PublishPipelineArtifact@1
-#      displayName: Publish Selenium artifact
-#      inputs:
-#        targetPath: '$(Build.ArtifactStagingDirectory)/selenium-$(Build.BuildId).zip'
-#        artifactName: 'drop-selenium'
+    - task: ArchiveFiles@2
+      displayName: Archive Selenium
+      inputs:
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/selenium'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/selenium-$(Build.BuildId).zip'
+
+    - task: PublishPipelineArtifact@1
+      displayName: Publish Selenium artifact
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)/selenium-$(Build.BuildId).zip'
+        artifactName: 'drop-selenium'
 
 - stage: Deploy
   jobs:
@@ -160,11 +160,6 @@ stages:
 
 - stage: Test
   jobs:
-  - job: PublishSeleniumTests
-    displayName: 'Publish Selenium Tests'
-    steps:
-    - publish: $(System.DefaultWorkingDirectory)/automatedtesting/selenium/selenium-tests.py
-      artifact: seleniumTestFile
   - deployment: test_vm
     displayName: Test on Virtual Machine
     environment:
@@ -174,24 +169,27 @@ stages:
       runOnce:
         deploy:
           steps:
-            - download: current
-              artifact: seleniumTestFile
-            - task: Bash@3
-              displayName: 'Run Selenium UI tests'
-              inputs:
-                targetType: 'inline'
-                script: |
-                  #!/bin/bash             
-                  sudo apt-get update -y
-                  sudo apt-get install python3-pip -y
-                  sudo apt-get install unzip -y
-                  sudo apt-get install -y chromium-browser
-                  sudo apt-get install -y chromium-chromedriver
-                  pip3 install selenium
-                  sudo mkdir -p /var/log/selenium
-                  sudo chmod 777 /var/log/selenium
-                  sudo python3 $(Pipeline.Workspace)/seleniumTestFile/selenium-tests.py 2>&1 | tee -a /var/log/selenium/selenium.log
-                  sudo touch /var/log/selenium/selenium.log
+          - bash: |
+              cd $(Pipeline.Workspace)/drop-selenium
+              find . -type f ! -name 'selenium-$(Build.BuildId).zip' -delete  # delete everything except 'selenium-$(Build.BuildId).zip'
+              unzip -o selenium-$(Build.BuildId).zip
+              pwd
+              ls -la
+              sudo mkdir -p /var/log/selenium
+              sudo chmod 777 /var/log/selenium
+              sudo python3 -u selenium-test.py 2>&1 | sudo tee -a /var/log/selenium/selenium-test.log
+              # copy selenium log file to $(System.DefaultWorkingDirectory)/log/selenium/
+              cd $(System.DefaultWorkingDirectory)
+              mkdir -p log/selenium
+              pwd
+              sudo cp /var/log/selenium/selenium-test.log log/selenium/selenium-test.log
+              ls -la
+            displayName: Run selenium tests
+          - task: PublishPipelineArtifact@1
+            displayName: Publish selenium logs
+            inputs:
+              targetPath: '$(System.DefaultWorkingDirectory)/log/selenium/selenium-test.log'
+              artifactName: 'drop-selenium-logs'
 
   - job: test_jmeter
     displayName: Test JMeter
