@@ -44,12 +44,9 @@ stages:
         backendAzureRmKey: 'test.terraform.tfstate'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
     
-    #Terraform apply
-    - task: TerraformTaskV2@2
+    #Terraform Apply bash
+    - bash: terraform apply -auto-approve
       displayName: Terraform Apply
-      inputs:
-        provider: 'azurerm'
-        command: 'apply'
-        commandOptions: '-auto-approve'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-        environmentServiceNameAzureRM: 'azurermsc'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+
+
