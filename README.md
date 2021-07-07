@@ -6,6 +6,7 @@
 * [Install our dependencies](#Install-our-dependencies)
 * [Configure storage account and state backend for Terraform](#Configure-storage-account-and-state-backend-for-Terraform)
 * [Create a Service Principal for Terraform](#Create-a-Service-Principal-for-Terraform)
+* [Create a Selenium test for a website](#Create-a-Selenium-test-for-a-website)
 * [References](#References)
 
 ## Introduction
@@ -164,6 +165,21 @@ We will also need a variables group, we will add the following data in a variabl
 - tenant_id: 'your-tenant-id'
 - public_key: 'your-public-key'
 
+![Variable Group](images/variablegroup.PNG)
+
+We are ready to run the Provision stage of our pipeline.
+
+## Create a Selenium test for a website
+For the next part of the project we will explain our tests that can be found on the selenium-test.py file.
+
+First we have to create our tests and later configure them to run in "headless" mode, if you are running the file on a pc, comment this lines in the ```selenium-test.py``` file:
+```Python
+options = ChromeOptions()
+options.add_argument("--headless") 
+driver = webdriver.Chrome(options=options)
+```
+
+
 ## References
 - [Udacity Project Starter Files](https://video.udacity-data.com/topher/2020/June/5ed815bf_project-starter-resources/project-starter-resources.zip)
 - [Visual Studio Code](https://code.visualstudio.com/)
@@ -188,4 +204,3 @@ We will also need a variables group, we will add the following data in a variabl
 - [Resources in YAML](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/resources?view=azure-devops&tabs=schema)
 - [Terraform on Azure Pipelines Best Practices](https://julie.io/writing/terraform-on-azure-pipelines-best-practices/)
 - [Use secure files](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops)
-- []()
