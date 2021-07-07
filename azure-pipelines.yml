@@ -20,6 +20,23 @@ stages:
           az --version
           az account show
 
+    - script: |
+        echo "Structure of work folder of this pipeline:"
+        tree $(Agent.WorkFolder)\1 /f
+
+        echo "Build.ArtifactStagingDirectory:" 
+
+        echo "$(Build.ArtifactStagingDirectory)"
+
+        echo "Build.BinariesDirectory:" 
+
+        echo "$(Build.BinariesDirectory)"
+
+        echo "Build.SourcesDirectory:"
+
+        echo "$(Build.SourcesDirectory)"
+        
+
     #Download azurecreds.conf File
     - task: DownloadSecureFile@1
       displayName: Download azurecreds.conf file
