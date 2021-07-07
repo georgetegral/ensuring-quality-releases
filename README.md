@@ -149,6 +149,8 @@ Further ahead when the pipeline is created, remember to go into the "Pipeline pe
 
 To access the VM that Terraform creates we will need to also upload to Secure Files a private key, and in the private key add a property for the public key and the value.
 
+To create the private key, please follow the official documentation from Microsoft at https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/install-ssh-key?view=azure-devops
+
 Our secure files should look something like this, in this case the private key is named id_rsa.
 ![Secure Files](images/securefiles.PNG)
 
@@ -175,3 +177,4 @@ And our Private Key Secure File Properties should look like this.
 - [Get subscription id with Azure CLI](https://yourazurecoach.com/2020/07/14/get-subscription-id-with-azure-cli/)
 - [Azure Provider: Authenticating using a Service Principal with a Client Secret](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/service_principal_client_secret)
 - [Terraform - Microsoft DevLabs](https://marketplace.visualstudio.com/items?itemName=ms-devlabs.custom-terraform-tasks)
+- [Install SSH Key Task](https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/install-ssh-key?view=azure-devops)
