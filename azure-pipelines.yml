@@ -13,7 +13,7 @@ stages:
     - task: TerraformInstaller@0
       displayName: Terraform Install
       inputs:
-        terraformVersion: '1.0.1'
+        terraformVersion: '0.13.5'
     
     #Download azurecreds.conf File
     - task: DownloadSecureFile@1
@@ -36,7 +36,7 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'init'
-        commandOptions: '-backend-config=$(azurecreds.secureFilePath)'
+        commandOptions: '-reconfigure -backend-config=$(azurecreds.secureFilePath)'
         backendServiceArm: 'azurermsc'
         backendAzureRmResourceGroupName: 'tstate'
         backendAzureRmStorageAccountName: 'tstate19206'
