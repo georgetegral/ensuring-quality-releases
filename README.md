@@ -137,6 +137,12 @@ access_key = "qwewqeDddsad13334324asdd7IuD4RK21jNFWq4XUwAQyYtxxneepnXxLWk49OYvTE
 
 We are now ready to configure an Azure DevOps Pipeline.
 
+## Configure Azure Pipelines
+We will need to install Terraform extension from Microsoft DevLabs to use terraform in our DevOps Project, install it from the following URL: https://marketplace.visualstudio.com/items?itemName=ms-devlabs.custom-terraform-tasks
+
+Create a new Service Connection in the Project by going to Project Settings -> Service connections -> New service connection -> Azure Resource Manager -> Service Principal (Automatic) -> Choose the subscription -> Choose the resource group -> Name the new service connection to Azure Resource Manager as ```azurermsc```.
+This service connection will be used in the ```azure-pipelines.yml``` file.
+
 
 ## References
 - [Udacity Project Starter Files](https://video.udacity-data.com/topher/2020/June/5ed815bf_project-starter-resources/project-starter-resources.zip)
@@ -156,3 +162,4 @@ We are now ready to configure an Azure DevOps Pipeline.
 - [Tutorial: Store Terraform state in Azure Storage](https://docs.microsoft.com/en-us/azure/developer/terraform/store-state-in-azure-storage)
 - [Get subscription id with Azure CLI](https://yourazurecoach.com/2020/07/14/get-subscription-id-with-azure-cli/)
 - [Azure Provider: Authenticating using a Service Principal with a Client Secret](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/service_principal_client_secret)
+- [Terraform - Microsoft DevLabs](https://marketplace.visualstudio.com/items?itemName=ms-devlabs.custom-terraform-tasks)
