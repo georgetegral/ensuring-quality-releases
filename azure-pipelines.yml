@@ -1,6 +1,3 @@
-variables:
-- group: azurecreds
-
 trigger:
 - master
 
@@ -32,9 +29,6 @@ stages:
         knownHostsEntry: 'known_hosts'
         sshPublicKey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC7K6Rr6Ms67KGUsdduZbg22Of8xUrRGJqR5K541bG82Booxt32BXHMWBD6541xUeK7cjX/4M5nRmITiZ1353BrTKjd1ZYBquInz/Qyh4tAfLk83aKJtQFdd1QCS0RLhukmuVMTVo1B7WgmAahw/3RRVyhhwHZigGmqY1jiC+mDmj/K00LhLOmy68r2o+aY7bFmtVdS4EpUDI1UlrF4Of1uPeds5eEliDfRDdQ3NGbNCOxo0zrZDyTXoEJZ0YOA+V6cn+6HcbiO5KJLagafmd549HqjgrW4j/vf1MUoATZifYEGRnEAYTZExsegM6g/b0PBrJazWLdONAM6lsqU8prve0BV9HWexaLMOmm19Vp953cEt4+GfWXyNa0jhauz6/stE0EUM0VBI/Q99hvpbVICFzobV4BnkADWbQHhjZYCymWrdN0CRmUm2qxTcq0TzAt3U5DMgMAdh4/HiutrrHvHgF/5RLzQ0Bk6Q0nidwoKsXj5LE+fxEb+PaVQ1wpUfGc= jorge@Platinum'
         sshKeySecureFile: 'id_rsa'
-    
-    #Az Login Script
-    - script: az login --service-principal -u $(client_id) -p $(client_secret) --tenant $(tenant_id)
 
     #Terraform Init
     - task: TerraformTaskV2@2
@@ -58,4 +52,5 @@ stages:
         command: 'apply'
         commandOptions: '-auto-approve'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+        backendServiceArm: 'azurermsc'
         environmentServiceNameAzureRM: 'azurermsc'
