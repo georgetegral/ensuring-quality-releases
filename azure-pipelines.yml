@@ -37,7 +37,7 @@ stages:
         provider: 'azurerm'
         command: 'init'
         commandOptions: '-backend-config=$(azurecreds.secureFilePath)'
-        backendServiceArm: 'azurermsc'
+        backendServiceArm: 'azurerm-sc'
         backendAzureRmResourceGroupName: 'tstate'
         backendAzureRmStorageAccountName: 'tstate19206'
         backendAzureRmContainerName: 'tstate'
@@ -46,9 +46,10 @@ stages:
     
     #Terraform apply
     - task: TerraformTaskV2@2
+      displayName: Terraform Apply
       inputs:
         provider: 'azurerm'
         command: 'apply'
         commandOptions: '-auto-approve'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-        environmentServiceNameAzureRM: 'azurermsc'
+        environmentServiceNameAzureRM: 'azurerm-sc'
