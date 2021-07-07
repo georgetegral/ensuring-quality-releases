@@ -7,7 +7,7 @@ stages:
   - job: TerraformTasks
     displayName: Terraform Tasks
     pool:
-      vmImage: 'ubuntu-18.04'
+      vmImage: 'windows-2019'
 
     steps:
     - task: AzureCLI@2
