@@ -13,8 +13,8 @@ stages:
       vmImage: 'ubuntu-18.04'
 
     steps:
-    - script: az login --service-principal -u $(client_id) --password $(client_secret) --tenant $(tenant_id) --allow-no-subscriptions
-      displayName: Az Login
+    #- script: az login --service-principal -u $(client_id) --password $(client_secret) --tenant $(tenant_id) --allow-no-subscriptions
+    #  displayName: Az Login
 
     #Download azurecreds.conf File
     - task: DownloadSecureFile@1
@@ -51,6 +51,20 @@ stages:
         backendAzureRmKey: 'test.terraform.tfstate'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
 
+
+    - task: AzureCLI@1
+      displayName: Terraform Deploy
+      inputs:
+        azureSubscription: azurermsc
+        scriptLocation: inlineScript
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+        addSpnToEnvironment: true
+        inlineScript: |
+            export ARM_CLIENT_ID=$(client_id)
+            export ARM_CLIENT_SECRET=$(client_secret)
+            export ARM_SUBSCRIPTION_ID=$(subscription_id)
+            export ARM_TENANT_ID=$(tenant_id)
+    
     #Terraform Apply
     - task: TerraformTaskV2@2
       displayName: Terraform Apply
@@ -60,4 +74,5 @@ stages:
         commandOptions: '-auto-approve'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: 'azurermsc'
+      
 
