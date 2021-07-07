@@ -18,10 +18,9 @@ stages:
     #Download azurecreds.conf File
     - task: DownloadSecureFile@1
       displayName: Download azurecreds.conf file
+      name: azurecreds
       inputs:
         secureFile: 'azurecreds.conf'
-    
-    - script: ls
 
     #Terraform Init
     - task: TerraformTaskV2@2
@@ -29,7 +28,7 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'init'
-        commandOptions: '-backend-config=../../../azurecreds.conf'
+        commandOptions: '-backend-config=$(azurecreds.secureFilePath)'
         backendServiceArm: 'azurermsc'
         backendAzureRmResourceGroupName: 'tstate'
         backendAzureRmStorageAccountName: 'tstate19206'
