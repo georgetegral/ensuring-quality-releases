@@ -13,7 +13,7 @@ stages:
       vmImage: 'ubuntu-18.04'
 
     steps:
-    - script: login --service-principal -u $(client_id) --password $(client_secret) --tenant $(tenant_id) --allow-no-subscriptions
+    - script: az login --service-principal -u $(client_id) --password $(client_secret) --tenant $(tenant_id) --allow-no-subscriptions
       displayName: Az Login
 
     #Download azurecreds.conf File
