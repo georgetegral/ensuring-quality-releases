@@ -8,13 +8,6 @@ stages:
     displayName: Install Dependencies
     
     steps:
-
-    #Download azurecreds.conf File
-    - task: DownloadSecureFile@1
-      displayName: Download azurecreds.conf file
-      name: azurecreds 
-      inputs:
-        secureFile: 'azurecreds.conf'
     
     #Install Terraform
     - task: TerraformInstaller@0
@@ -26,8 +19,13 @@ stages:
   jobs:
   - job: TerraformTasks
     displayName: Terraform Tasks
-    
+       
     steps:
+    #Download azurecreds.conf File
+    - task: DownloadSecureFile@1
+      displayName: Download azurecreds.conf file
+      inputs:
+        secureFile: 'azurecreds.conf'
     #Terraform Init
     
     - task: TerraformTaskV2@2
