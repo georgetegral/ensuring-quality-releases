@@ -21,7 +21,10 @@ resource "azurerm_linux_virtual_machine" "test" {
 
   admin_ssh_key {
     username   = var.admin_username
-    public_key = file("~/.ssh/id_rsa.pub")
+    #Local ssh deployment
+    #public_key = file("~/.ssh/id_rsa.pub")
+    #Azure ssh deployment
+    public_key = file("/home/vsts/work/_temp/id_rsa.pub")
   }
   os_disk {
     caching           = "ReadWrite"
