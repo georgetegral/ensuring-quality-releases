@@ -36,6 +36,7 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'init'
+        commandOptions: '-backend-config=$(azurecreds.secureFilePath)'
         backendServiceArm: 'azurermsc'
         backendAzureRmResourceGroupName: 'tstate'
         backendAzureRmStorageAccountName: 'tstate19206'
