@@ -7,9 +7,16 @@ stages:
   - job: TerraformTasks
     displayName: Terraform Tasks
     pool:
-      vmImage: 'windows-2019'
+      vmImage: 'ubuntu-18.04'
 
     steps:
+    - task: PowerShell@2
+      displayName: PowerShell Hello World
+      inputs:
+        targetType: 'inline'
+        script: |
+          Write-Host "Hello World"
+
     - task: AzureCLI@2
       displayName: Azure CLI
       inputs:
