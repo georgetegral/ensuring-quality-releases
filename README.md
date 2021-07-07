@@ -7,6 +7,7 @@
 * [Configure storage account and state backend for Terraform](#Configure-storage-account-and-state-backend-for-Terraform)
 * [Create a Service Principal for Terraform](#Create-a-Service-Principal-for-Terraform)
 * [Create a Selenium test for a website](#Create-a-Selenium-test-for-a-website)
+* [Configure an Azure Log Analytics Workspace](#Configure-an-azure-log-analytics-workspace)
 * [References](#References)
 
 ## Introduction
@@ -152,6 +153,8 @@ To access the VM that Terraform creates we will need to also upload to Secure Fi
 
 To create the private key, please follow the official documentation from Microsoft at https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/install-ssh-key?view=azure-devops
 
+Save the public key in a variable group.
+
 Our secure files should look something like this, in this case the private key is named id_rsa.
 ![Secure Files](images/securefiles.PNG)
 
@@ -179,6 +182,17 @@ options.add_argument("--headless")
 driver = webdriver.Chrome(options=options)
 ```
 
+## Configure an Azure Log Analytics Workspace
+To run the Deploy stage of our pipeline we must configure an Azure Log Analytics Workspace before running the Deploy Virtual Machine task. To do this run the ```setup-log-analytics.sh``` file in the deployments directory, modify as needed and refer to the official Microsoft documentation if needed: https://docs.microsoft.com/en-us/azure/azure-monitor/logs/quick-create-workspace-cli
+
+After that, navigate to the Azure Portal, go to the resource group where the Workspace was created, click on the resource and navigate to Settings -> Agents Management.
+
+![Log Analytics Agents Management](images/loganalyticsagentsmanagement.PNG)
+
+Copy both the Workspace ID and the Primary Key, save both values in the variable group that we previously created. We will save them as la_workspace_id and la_primary_key, respectively. We can save the Primary Key by making the value secure.
+
+We are ready to run the Deploy stage of the pipeline!
+
 
 ## References
 - [Udacity Project Starter Files](https://video.udacity-data.com/topher/2020/June/5ed815bf_project-starter-resources/project-starter-resources.zip)
@@ -204,3 +218,5 @@ driver = webdriver.Chrome(options=options)
 - [Resources in YAML](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/resources?view=azure-devops&tabs=schema)
 - [Terraform on Azure Pipelines Best Practices](https://julie.io/writing/terraform-on-azure-pipelines-best-practices/)
 - [Use secure files](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops)
+- [Create a Log Analytics workspace with Azure CLI 2.0](https://docs.microsoft.com/en-us/azure/azure-monitor/logs/quick-create-workspace-cli)
+- [Install Log Analytics agent on Linux computers](https://docs.microsoft.com/en-us/azure/azure-monitor/agents/agent-linux)
