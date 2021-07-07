@@ -140,9 +140,14 @@ We are now ready to configure an Azure DevOps Pipeline.
 ## Configure Azure Pipelines
 We will need to install Terraform extension from Microsoft DevLabs to use terraform in our DevOps Project, install it from the following URL: https://marketplace.visualstudio.com/items?itemName=ms-devlabs.custom-terraform-tasks
 
-Create a new Service Connection in the Project by going to Project Settings -> Service connections -> New service connection -> Azure Resource Manager -> Service Principal (Automatic) -> Choose the subscription -> Choose the resource group -> Name the new service connection to Azure Resource Manager as ```azurermsc```.
+Now we need to create a new Service Connection in the Project by going to Project Settings -> Service connections -> New service connection -> Azure Resource Manager -> Service Principal (Automatic) -> Choose the subscription -> Choose the resource (group where the storage account was created) -> Name the new service connection to Azure Resource Manager as ```azurermsc```.
 This service connection will be used in the ```azure-pipelines.yml``` file.
 
+The next step is to upload our ```azurecreds.conf``` to Azure Devops as a Secure File, to do this we have to navigate to Pipelines -> Library -> Secure Files -> + Secure File -> Upload File. Now the file should be uploaded
+
+Further ahead when the pipeline is created, remember to go into the "Pipeline permissions" menu by clicking in the file name in the "Secure Files" menu and add add the pipeline that we will be using.
+
+![Secure File](images/securefile.PNG)
 
 ## References
 - [Udacity Project Starter Files](https://video.udacity-data.com/topher/2020/June/5ed815bf_project-starter-resources/project-starter-resources.zip)
