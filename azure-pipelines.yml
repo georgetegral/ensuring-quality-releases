@@ -1,6 +1,3 @@
-variables:
-- group: azurecreds
-
 trigger:
 - master
 
@@ -13,8 +10,15 @@ stages:
       vmImage: 'ubuntu-18.04'
 
     steps:
-    - script: az login -u $(username) -p $(password)
-      displayName: Az sign in with credentials
+    - task: AzureCLI@2
+      displayName: Azure CLI
+      inputs:
+        azureSubscription: azurermsc
+        scriptType: ps
+        scriptLocation: inlineScript
+        inlineScript: |
+          az --version
+          az account show
 
     #Download azurecreds.conf File
     - task: DownloadSecureFile@1
