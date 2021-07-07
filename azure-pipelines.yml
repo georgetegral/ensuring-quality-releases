@@ -21,6 +21,8 @@ stages:
       inputs:
         secureFile: 'azurecreds.conf'
     
+    - script: ls
+
     #Terraform Init
     - task: TerraformTaskV2@2
       displayName: Terraform Init
