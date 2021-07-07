@@ -7,6 +7,7 @@
 * [Configure storage account and state backend for Terraform](#Configure-storage-account-and-state-backend-for-Terraform)
 * [Create a Service Principal for Terraform](#Create-a-Service-Principal-for-Terraform)
 * [Create a Selenium test for a website](#Create-a-Selenium-test-for-a-website)
+* [Configure Pipeline Environment](#Configure-Pipeline-Environment)
 * [Configure an Azure Log Analytics Workspace](#Configure-an-azure-log-analytics-workspace)
 * [References](#References)
 
@@ -182,6 +183,15 @@ options.add_argument("--headless")
 driver = webdriver.Chrome(options=options)
 ```
 
+## Configure Pipeline Environment
+After Terraform deploys the VM in Azure we need to manually register the Virtual Machine in Pipelines -> Environments -> TEST -> Add resource -> Virtual Machines -> Linux. Then copy the registration script and manually ssh into the virtual machine, paste it on the terminal and run it.
+
+![Environment Virtual Machine Configuration](images/environmentvm.PNG)
+
+This enables Azure Pipelines to run commands in that Virtual Machine. After a successful Deploy run, it should look something like this:
+
+![Test Environment](images/testenvironment.PNG)
+
 ## Configure an Azure Log Analytics Workspace
 To run the Deploy stage of our pipeline we must configure an Azure Log Analytics Workspace before running the Deploy Virtual Machine task. To do this run the ```setup-log-analytics.sh``` file in the deployments directory, modify as needed and refer to the official Microsoft documentation if needed: https://docs.microsoft.com/en-us/azure/azure-monitor/logs/quick-create-workspace-cli
 
@@ -189,9 +199,11 @@ After that, navigate to the Azure Portal, go to the resource group where the Wor
 
 ![Log Analytics Agents Management](images/loganalyticsagentsmanagement.PNG)
 
-Copy both the Workspace ID and the Primary Key, save both values in the variable group that we previously created. We will save them as la_workspace_id and la_primary_key, respectively. We can save the Primary Key by making the value secure.
+Navigate to Linux Servers and there will be the script to install the Linux Agent in our Virtual Machine that we used in the script.
 
 We are ready to run the Deploy stage of the pipeline!
+
+If everything worked as intented, we should see "1 Linux computers connected" in the Agents Management in the Log Analytics Workspace.
 
 
 ## References
