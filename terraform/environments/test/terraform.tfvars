@@ -1,5 +1,5 @@
 # Azure subscription vars
-subscription_id = ""
+subscription_id = "76ecc65a-b866-4328-925f-0cafa9642559"
 client_id = ""
 client_secret = ""
 tenant_id = ""
