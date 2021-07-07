@@ -22,6 +22,14 @@ stages:
       inputs:
         secureFile: 'azurecreds.conf'
 
+    # Install SSH Key for VM
+    - task: InstallSSHKey@0
+      displayName: Install SSH key
+      inputs:
+        knownHostsEntry: 'known_hosts'
+        sshPublicKey: $(PUBLIC_KEY)
+        sshKeySecureFile: 'udacity_azure'
+    
     #Terraform Init
     - task: TerraformTaskV2@2
       displayName: Terraform Init
