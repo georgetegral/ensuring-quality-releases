@@ -1,6 +1,3 @@
-variables:
-- group: azurecreds
-
 trigger:
 - master
 
@@ -9,6 +6,8 @@ stages:
   jobs:
   - job: TerraformTasks
     displayName: Terraform Tasks
+    pool:
+      vmImage: 'ubuntu-18.04'
        
     steps:
        
@@ -36,19 +35,28 @@ stages:
     - script: az account show
       displayName: Az Account Show
 
-    #Terraform Init script
-    - script: terraform init -backend-config=$(azurecreds.secureFilePath)
+    #Terraform Init
+    - task: TerraformTaskV2@2
       displayName: Terraform Init
-      workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-    
-    #Terraform Apply script
-    - script: terraform apply -auto-approve
-      displayName: Terraform Apply
-      workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-      env:
-        ARM_SUBSCRIPTION_ID: $(subscription_id)
-        ARM_CLIENT_ID:       $(client_id)
-        ARM_CLIENT_SECRET:   $(client_secret)
-        ARM_TENANT_ID:       $(tenant_id)
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        commandOptions: '-backend-config=$(azurecreds.secureFilePath)'
+        backendServiceArm: 'azurermsc'
+        backendAzureRmResourceGroupName: 'tstate'
+        backendAzureRmStorageAccountName: 'tstate19206'
+        backendAzureRmContainerName: 'tstate'
+        backendAzureRmKey: 'test.terraform.tfstate'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
 
+
+    #Terraform Apply
+    - task: TerraformTaskV2@2
+      displayName: Terraform Apply
+      inputs:
+        provider: 'azurerm'
+        command: 'apply'
+        commandOptions: '-auto-approve'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+        environmentServiceNameAzureRM: 'azurermsc'
 
