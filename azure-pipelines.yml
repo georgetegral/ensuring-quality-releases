@@ -1,3 +1,5 @@
+variables:
+- group: azurecreds
 trigger:
 - master
 
@@ -39,5 +41,10 @@ stages:
     - bash: terraform apply -auto-approve
       displayName: Terraform Apply
       workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+      env:
+        ARM_SUBSCRIPTION_ID: $(subscription-id)
+        ARM_CLIENT_ID:       $(client-id)
+        ARM_CLIENT_SECRET:   $(client-secret)
+        ARM_TENANT_ID:       $(tenant-id)
 
 
