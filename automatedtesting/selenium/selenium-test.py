@@ -47,6 +47,7 @@ if __name__ == "__main__":
     options.add_argument("--headless") 
     driver = webdriver.Chrome(options=options)
     #driver = webdriver.Chrome()
+    
     print (timestamp()+'Browser started successfully. Navigating to the demo page to login.')
 
     login(driver, 'standard_user', 'secret_sauce')
