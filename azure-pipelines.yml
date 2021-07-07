@@ -34,7 +34,7 @@ stages:
         sshKeySecureFile: 'id_rsa'
     
     #Az Login Script
-    - script: az login --service-principal -u $[client_id] -p $[client_secret] --tenant $[tenant_id]
+    - script: az login --service-principal -u $(client_id) -p $(client_secret) --tenant $(tenant_id)
 
     #Terraform Init
     - task: TerraformTaskV2@2
