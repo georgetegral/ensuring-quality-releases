@@ -44,7 +44,7 @@ stages:
         provider: 'azurerm'
         command: 'init'
         commandOptions: '-backend-config=$(azurecreds.secureFilePath)'
-        backendServiceArm: 'azurermsc'
+        backendServiceArm: 'azurerm-sc'
         backendAzureRmResourceGroupName: 'tstate'
         backendAzureRmStorageAccountName: 'tstate19206'
         backendAzureRmContainerName: 'tstate'
@@ -55,7 +55,7 @@ stages:
     - task: AzureCLI@1
       displayName: Terraform Deploy
       inputs:
-        azureSubscription: azurermsc
+        azureSubscription: azurerm-sc
         scriptLocation: inlineScript
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         addSpnToEnvironment: true
@@ -73,6 +73,6 @@ stages:
         command: 'apply'
         commandOptions: '-auto-approve'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-        environmentServiceNameAzureRM: 'azurermsc'
+        environmentServiceNameAzureRM: 'azurerm-sc'
       
 
