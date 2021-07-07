@@ -140,14 +140,14 @@ We are now ready to configure an Azure DevOps Pipeline.
 ## Configure Azure Pipelines
 We will need to install Terraform extension from Microsoft DevLabs to use terraform in our DevOps Project, install it from the following URL: https://marketplace.visualstudio.com/items?itemName=ms-devlabs.custom-terraform-tasks
 
-Now we need to create a new Service Connection in the Project by going to Project Settings -> Service connections -> New service connection -> Azure Resource Manager -> Service Principal (Automatic) -> Choose the subscription -> Choose the resource (group where the storage account was created) -> Name the new service connection to Azure Resource Manager as ```azurermsc```.
+Now we need to create a new Service Connection in the Project by going to Project Settings -> Service connections -> New service connection -> Azure Resource Manager -> Service Principal (Manual) -> Choose the subscription -> Fill the data from your azurecreds.conf file -> Name the new service connection to Azure Resource Manager as ```azurerm-sc```.
 This service connection will be used in the ```azure-pipelines.yml``` file.
 
 The next step is to upload our ```azurecreds.conf``` to Azure Devops as a Secure File, to do this we have to navigate to Pipelines -> Library -> Secure Files -> + Secure File -> Upload File. Now the file should be uploaded.
 
 Further ahead when the pipeline is created, remember to go into the "Pipeline permissions" menu by clicking in the file name in the "Secure Files" menu and add add the pipeline that we will be using.
 
-To access the VM that Terraform creates we will need to also upload to Secure Files a private key, and in the private key add a property for the public key and the value.
+To access the VM that Terraform creates we will need to also upload to Secure Files a private key.
 
 To create the private key, please follow the official documentation from Microsoft at https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/install-ssh-key?view=azure-devops
 
@@ -157,6 +157,12 @@ Our secure files should look something like this, in this case the private key i
 And our Private Key Secure File Properties should look like this.
 ![Private Key Properties](images/securefileproperties.PNG)
 
+We will also need a variables group, we will add the following data in a variable group named ```azurecreds```:
+- client_id: 'your-client-id'
+- client_secret: 'your-client-secret' (click on the lock to change it to a secret variable)
+- subscription_id: 'your-subscription-id'
+- tenant_id: 'your-tenant-id'
+- public_key: 'your-public-key'
 
 ## References
 - [Udacity Project Starter Files](https://video.udacity-data.com/topher/2020/June/5ed815bf_project-starter-resources/project-starter-resources.zip)
