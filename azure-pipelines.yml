@@ -13,9 +13,6 @@ stages:
       vmImage: 'ubuntu-18.04'
 
     steps:
-    #- script: az login --service-principal -u $(client_id) --password $(client_secret) --tenant $(tenant_id) --allow-no-subscriptions
-    #  displayName: Az Login
-
     #Download azurecreds.conf File
     - task: DownloadSecureFile@1
       displayName: Download azurecreds.conf file
@@ -74,5 +71,56 @@ stages:
         commandOptions: '-auto-approve'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: 'azurerm-sc'
-      
 
+- stage: Destroy
+  jobs:
+  - job: destroy_azure_infrastructure
+    displayName: Destroy Azure Infrastructure
+    pool:
+      vmImage: 'ubuntu-18.04'
+    steps:
+    
+    #Download azurecreds.conf File
+    - task: DownloadSecureFile@1
+      displayName: Download azurecreds.conf file
+      name: azurecreds
+      inputs:
+        secureFile: 'azurecreds.conf'
+
+    # Install SSH Key for VM
+    - task: InstallSSHKey@0
+      displayName: Install SSH key
+      inputs:
+        knownHostsEntry: 'known_hosts'
+        sshPublicKey: $(public_key)
+        sshKeySecureFile: 'id_rsa'
+
+    #Terraform Install
+    - task: TerraformInstaller@0
+      displayName: Terraform Install
+      inputs:
+        terraformVersion: '1.0.1'
+
+    #Terraform Init
+    - task: TerraformTaskV2@2
+      displayName: Terraform Init
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        commandOptions: '-backend-config=$(azurecreds.secureFilePath)'
+        backendServiceArm: 'azurerm-sc'
+        backendAzureRmResourceGroupName: 'tstate'
+        backendAzureRmStorageAccountName: 'tstate19206'
+        backendAzureRmContainerName: 'tstate'
+        backendAzureRmKey: 'test.terraform.tfstate'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+
+    - task: TerraformTaskV2@2
+      displayName: Terraform Destroy
+      inputs:
+        provider: 'azurerm'
+        command: 'destroy'
+        commandOptions: |
+          -auto-approve 
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+        environmentServiceNameAzureRM: 'azurerm-sc'
