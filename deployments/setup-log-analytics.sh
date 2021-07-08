@@ -1,1 +1,1 @@
-az deployment group create --resource-group udacityrg --name loganalytics --template-file deploylaworkspacetemplate.json
+az deployment group create --resource-group udacityrg --name loganalyticsw --template-file deploylaworkspacetemplate.json
