@@ -30,9 +30,11 @@ For this project we will follow the next steps:
 1. Install our dependencies
 2. Configure storage account and state backend for Terraform
 3. Create a Service Principal for Terraform
-- Use Terraform.
-- Configure Azure Monitor.
-- Configure Azure Log Analytics.
+4. Configure Pipeline Environment
+5. Configure an Azure Log Analytics Workspace
+6. Create Postman Test Suites
+7. Create a Selenium test for a website
+8. Create a Test Suite with JMeter
 
 ## Install our dependencies
 For the successful run of this project we need to do the following prework:
@@ -175,6 +177,10 @@ We will also need a variables group, we will add the following data in a variabl
 
 We are ready to run the Provision stage of our pipeline.
 
+If all the configuration was correct, then the terraform apply command should be successful, and our resources should be deployed to the cloud.
+
+![Terraform Apply](images/terraformapply.PNG)
+
 ## Configure Pipeline Environment
 After Terraform deploys the VM in Azure we need to manually register the Virtual Machine in Pipelines -> Environments -> TEST -> Add resource -> Virtual Machines -> Linux. Then copy the registration script and manually ssh into the virtual machine, paste it on the terminal and run it.
 
@@ -234,11 +240,11 @@ For this tests we used the website https://www.saucedemo.com/, we tested login, 
 
 In the Azure Pipeline Job section we can check the logs of the Selenium Test
 
-
+![Selenium Logs in Job for Python](images/seleniumlogs1.PNG)
 
 We also defined an artifact that contains the logs for all Selenium runs.
 
-
+![Selenium Logs in Job for artifact](images/seleniumlogs2.PNG)
 
 ## Create a Test Suite with JMeter
 In this step we will create both endurance tests and stress tests with Apache JMeter.
