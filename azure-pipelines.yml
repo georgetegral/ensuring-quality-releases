@@ -254,14 +254,14 @@ stages:
         mkdir -p log/newman
       displayName: Install Newman CLI
     - bash: |
-        newman run automatedtesting/postman/regressionTestUdacity.json \
+        newman run automatedtesting/postman/regressionTestUdacity.postman_collection.json \
                    -e automatedtesting/postman/testingenvironment.postman_environment.json \
                    --reporters cli,junit \
                    --reporter-junit-export log/newman/regressionTestUdacity.xml \
                    --suppress-exit-code
       displayName: Run Regression Test
     - bash: |
-        newman run automatedtesting/postman/validationTestUdacity.json \
+        newman run automatedtesting/postman/validationTestUdacity.postman_collection.json \
                    -e automatedtesting/postman/testingenvironment.postman_environment.json \
                    --reporters cli,junit \
                    --reporter-junit-export log/newman/validationTestUdacity.xml \
