@@ -14,6 +14,7 @@
 * [Enable Monitoring & Observability](#Enable-Monitoring-&-Observability)
   * [Azure Monitor](#Azure-Monitor)
   * [Azure Log Analytics](#Azure-Log-Analytics)
+* [Wrap Up](#Wrap-Up)
 * [Future Work](#Future-Work)
 * [References](#References)
 
@@ -258,6 +259,14 @@ Open the ```stress-test.jmx``` and ```endurance-test.jmx``` and navigate to the 
 
 By running the tests in Azure Pipelines we can get summaries for both of them.
 
+![Stress test](images/stresstest.PNG)
+
+![Endurance test](images/endurancetest.PNG)
+
+We also have JMeter Artifacts which we can download if we need
+
+![JMeter artifacts](images/jmeterartifacts.PNG)
+
 ## Enable Monitoring & Observability
 
 In this final section, we will enable Monitoring & Observability in our Virtual Machine and App Service to observe the effects of our tests.
@@ -333,6 +342,11 @@ Finally, in Review + Create we will create the custom log.
 We can query it in the Logs section of Log Analytics Workspace by writing ```SeleniumTestLogs_CL```
 
 ![Custom Selenium Logs](images/seleniumlogs3.PNG)
+
+## Wrap Up
+Finally, we can see that our complete pipeline is correctly executed!
+
+![Pipeline Passed](images/pipelinepassed.PNG)
 
 ## Future Work
 - We could cause errors or other scenarios for the AppService/VM and demonstrate those behaviors in the test suites as well as in Azure Monitor and Log Analytics.

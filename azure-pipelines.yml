@@ -238,8 +238,6 @@ stages:
         versionSpec: '12.x'
     - bash: |
         npm install -g newman
-        newman --version
-        # create log directory
         mkdir -p log/newman
       displayName: Install Newman CLI
     - bash: |
