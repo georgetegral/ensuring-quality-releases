@@ -11,9 +11,10 @@
 * [Create Postman Test Suites](#Create-Postman-Test-Suites)
 * [Create a Selenium test for a website](#Create-a-Selenium-test-for-a-website)
 * [Create a Test Suite with JMeter](#Create-a-Test-Suite-with-JMeter)
-* [Monitoring & Observability](#Monitoring-&-Observability)
+* [Enable Monitoring & Observability](#Enable-Monitoring-&-Observability)
   * [Azure Monitor](#Azure-Monitor)
   * [Azure Log Analytics](#Azure-Log-Analytics)
+* [Future Work](#Future-Work)
 * [References](#References)
 
 ## Introduction
@@ -38,6 +39,7 @@ For this project we will follow the next steps:
 6. Create Postman Test Suites
 7. Create a Selenium test for a website
 8. Create a Test Suite with JMeter
+9. Enable Monitoring & Observability
 
 ## Install our dependencies
 For the successful run of this project we need to do the following prework:
@@ -252,7 +254,7 @@ We also defined an artifact that contains the logs for all Selenium runs.
 ## Create a Test Suite with JMeter
 In this step we will create both endurance tests and stress tests with Apache JMeter.
 
-## Monitoring & Observability
+## Enable Monitoring & Observability
 
 In this final section, we will enable Monitoring & Observability in our Virtual Machine and App Service to observe the effects of our tests.
 
@@ -271,8 +273,23 @@ Finally we will add our Alert Rule Details. we will set it as ```10Requests``` a
 
 Finally, hit ```Create Alert Rule```
 
-The alert should show something like this:
+The Alert Rules should look like this:
 
+![Alert Rules](images/alertrules.PNG)
+
+When the alert fires, we should get an email similar to this:
+
+![Email Alert](images/emailalert.PNG)
+
+As we selected that we should get an alert if the AppService gets 10 requests or more, let's look at the requests graph available in the Azure Portal.
+
+![Requests Graph](images/alertgraph.PNG)
+
+In this graph we can see that the number of requests went above 10.
+
+We can also see the severity of our alerts in the ```Alerts``` section of the App Service
+
+![Alerts Monitor](images/alertsmonitor.PNG)
 
 ### Azure Log Analytics
 As we previously configured Azure Log Analytics, we can check in the Azure Portal the outputs of the Selenium Test Suite. For this we will configure custom logs.
@@ -312,6 +329,10 @@ Finally, in Review + Create we will create the custom log.
 We can query it in the Logs section of Log Analytics Workspace by writing ```SeleniumTestLogs_CL```
 
 ![Custom Selenium Logs](images/seleniumlogs3.PNG)
+
+## Future Work
+- We could cause errors or other scenarios for the AppService/VM and demonstrate those behaviors in the test suites as well as in Azure Monitor and Log Analytics.
+- We could create a VM Scale Set in Terraform and complete each of the steps with the VM Scale set.
 
 ## References
 - [Udacity Project Starter Files](https://video.udacity-data.com/topher/2020/June/5ed815bf_project-starter-resources/project-starter-resources.zip)
