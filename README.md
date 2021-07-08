@@ -221,13 +221,15 @@ After we run the Postman tests in our pipeline we can get Test Results in Test P
 
 ![Postman Run Summary](images/postmanTestsResults.PNG)
 
-We can navigate to the Test Results page to see exactly what tests passed and what failed. We
+We can navigate to the Test Results page to see exactly what tests passed and what failed.
 
 ![Postman Tests Results](images/postmanTestsResults2.PNG)
 
 In the Pipeline run we can check the logs of the publishing of the test results.
 
 ![Postman Tests Results Pipeline logs](images/postmanTestsResults3.PNG)
+
+Please do note that this API is not very stable, so passing test results may vary according to the time of usage.
 
 ## Create a Selenium test for a website
 For the next part of the project we will explain our tests that can be found on the selenium-test.py file.
