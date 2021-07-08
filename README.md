@@ -254,6 +254,8 @@ We also defined an artifact that contains the logs for all Selenium runs.
 ## Create a Test Suite with JMeter
 In this step we will create both endurance tests and stress tests with Apache JMeter.
 
+Open the ```stress-test.jmx``` and ```endurance-test.jmx``` and navigate to the View Results Tree tab, run the test and then navigate to Tools -> Generate HTML Report, browse for the results file, the user.properties file and the output directory. Generate the HTML reports for both tests.
+
 ## Enable Monitoring & Observability
 
 In this final section, we will enable Monitoring & Observability in our Virtual Machine and App Service to observe the effects of our tests.
