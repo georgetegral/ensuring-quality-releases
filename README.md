@@ -205,6 +205,19 @@ For this part we will use Postman and Newman to test each endpoint of the web ap
 
 We created both regression tests and validation tests, and an environment to store our variables. And we also defined the publishing of test results to Test Plans of Azure Devops.
 
+Something to note is that the API that we are testing is quite unstable, so some calls to the endpoints might fail with a 429 error code.
+
+After we run the Postman tests in our pipeline we can get Test Results in Test Plans -> Runs -> Postman Test Results (The name that we defined). We should get a result similar to this in the Run Summary page:
+
+![Postman Run Summary](images/postmanTestsResults.PNG)
+
+We can navigate to the Test Results page to see exactly what tests passed and what failed. We
+
+![Postman Tests Results](images/postmanTestsResults2.PNG)
+
+In the Pipeline run we can check the logs of the publishing of the test results.
+
+![Postman Tests Results Pipeline logs](images/postmanTestsResults3.PNG)
 
 ## Create a Selenium test for a website
 For the next part of the project we will explain our tests that can be found on the selenium-test.py file.
