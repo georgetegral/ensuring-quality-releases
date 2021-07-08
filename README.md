@@ -169,9 +169,6 @@ Save the public key in a variable group.
 Our secure files should look something like this, in this case the private key is named id_rsa.
 ![Secure Files](images/securefiles.PNG)
 
-And our Private Key Secure File Properties should look like this.
-![Private Key Properties](images/securefileproperties.PNG)
-
 We will also need a variables group, we will add the following data in a variable group named ```azurecreds```:
 - client_id: 'your-client-id'
 - client_secret: 'your-client-secret' (click on the lock to change it to a secret variable)
