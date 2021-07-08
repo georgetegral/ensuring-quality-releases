@@ -6,7 +6,7 @@ tenant_id = ""
 
 # Resource Group/Location
 location = "southcentralus"
-resource_group = "udacityrg"
+resource_group = "udacityrg2"
 application_type = "udacitytest"
 
 # Network
