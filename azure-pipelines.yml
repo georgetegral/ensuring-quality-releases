@@ -168,7 +168,7 @@ stages:
               
               sudo mkdir -p /var/log/selenium
               sudo chmod 777 /var/log/selenium
-              python3 -u selenium-test.py 2>&1 | tee -a /var/log/selenium/selenium-test.log
+              python3 -u selenium-test.py 2>&1 | sudo tee -a /var/log/selenium/selenium-test.log
 
               cd $(System.DefaultWorkingDirectory)
               mkdir -p log/selenium
