@@ -6,10 +6,11 @@
 * [Install our dependencies](#Install-our-dependencies)
 * [Configure storage account and state backend for Terraform](#Configure-storage-account-and-state-backend-for-Terraform)
 * [Create a Service Principal for Terraform](#Create-a-Service-Principal-for-Terraform)
-* [Create Postman Test Suites](#Create-Postman-Test-Suites)
-* [Create a Selenium test for a website](#Create-a-Selenium-test-for-a-website)
 * [Configure Pipeline Environment](#Configure-Pipeline-Environment)
 * [Configure an Azure Log Analytics Workspace](#Configure-an-azure-log-analytics-workspace)
+* [Create Postman Test Suites](#Create-Postman-Test-Suites)
+* [Create a Selenium test for a website](#Create-a-Selenium-test-for-a-website)
+* [Create a Test Suite with JMeter](#Create-a-Test-Suite-with-JMeter)
 * [References](#References)
 
 ## Introduction
@@ -205,7 +206,7 @@ For this part we will use Postman and Newman to test each endpoint of the web ap
 
 We created both regression tests and validation tests, and an environment to store our variables. And we also defined the publishing of test results to Test Plans of Azure Devops.
 
-Something to note is that the API that we are testing is quite unstable, so some calls to the endpoints might fail with a 429 error code.
+Something to note is that the API that we are testing (http://dummy.restapiexample.com) is quite unstable as it recieves a lot of traffic, so some calls to the endpoints might fail with a 429 error code.
 
 After we run the Postman tests in our pipeline we can get Test Results in Test Plans -> Runs -> Postman Test Results (The name that we defined). We should get a result similar to this in the Run Summary page:
 
@@ -230,6 +231,18 @@ driver = webdriver.Chrome(options=options)
 ```
 
 For this tests we used the website https://www.saucedemo.com/, we tested login, adding 6 items to cart and removing those 6 items.
+
+In the Azure Pipeline Job section we can check the logs of the Selenium Test
+
+
+
+We also defined an artifact that contains the logs for all Selenium runs.
+
+
+
+## Create a Test Suite with JMeter
+In this step we will create both endurance tests and stress tests with Apache JMeter.
+
 
 ## References
 - [Udacity Project Starter Files](https://video.udacity-data.com/topher/2020/June/5ed815bf_project-starter-resources/project-starter-resources.zip)
@@ -259,3 +272,4 @@ For this tests we used the website https://www.saucedemo.com/, we tested login, 
 - [Install Log Analytics agent on Linux computers](https://docs.microsoft.com/en-us/azure/azure-monitor/agents/agent-linux)
 - [Sauce Demo](#https://www.saucedemo.com/)
 - [Running collections on the command line with Newman](https://learning.postman.com/docs/running-collections/using-newman-cli/command-line-integration-with-newman/)
+- [Dummy Rest API Example](http://dummy.restapiexample.com)

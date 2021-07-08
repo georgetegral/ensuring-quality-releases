@@ -14,7 +14,7 @@ def login (driver, user, password):
     driver.find_element_by_css_selector("input[id='password']").send_keys(password)
     driver.find_element_by_id("login-button").click()
     assert 'https://www.saucedemo.com/inventory.html' in driver.current_url
-    print(timestamp() +' Login successful.')
+    print(timestamp() +' Login successful with username '+ user + ' and password '+ password)
 
 def add_cart(driver,n):
     acum = 0
