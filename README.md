@@ -6,6 +6,7 @@
 * [Install our dependencies](#Install-our-dependencies)
 * [Configure storage account and state backend for Terraform](#Configure-storage-account-and-state-backend-for-Terraform)
 * [Create a Service Principal for Terraform](#Create-a-Service-Principal-for-Terraform)
+* [Create Postman Test Suites](#Create-Postman-Test-Suites)
 * [Create a Selenium test for a website](#Create-a-Selenium-test-for-a-website)
 * [Configure Pipeline Environment](#Configure-Pipeline-Environment)
 * [Configure an Azure Log Analytics Workspace](#Configure-an-azure-log-analytics-workspace)
@@ -173,6 +174,9 @@ We will also need a variables group, we will add the following data in a variabl
 
 We are ready to run the Provision stage of our pipeline.
 
+## Create Postman Test Suites
+For this part we will use Postman and Newman
+
 ## Create a Selenium test for a website
 For the next part of the project we will explain our tests that can be found on the selenium-test.py file.
 
@@ -182,6 +186,8 @@ options = ChromeOptions()
 options.add_argument("--headless") 
 driver = webdriver.Chrome(options=options)
 ```
+
+For this tests we used the website https://www.saucedemo.com/, we tested login, adding 6 items to cart and removing those 6 items.
 
 ## Configure Pipeline Environment
 After Terraform deploys the VM in Azure we need to manually register the Virtual Machine in Pipelines -> Environments -> TEST -> Add resource -> Virtual Machines -> Linux. Then copy the registration script and manually ssh into the virtual machine, paste it on the terminal and run it.
@@ -235,3 +241,4 @@ If everything worked as intented, we should see "1 Linux computers connected" in
 - [Use secure files](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops)
 - [Create a Log Analytics workspace with Azure CLI 2.0](https://docs.microsoft.com/en-us/azure/azure-monitor/logs/quick-create-workspace-cli)
 - [Install Log Analytics agent on Linux computers](https://docs.microsoft.com/en-us/azure/azure-monitor/agents/agent-linux)
+- [Sauce Demo](#https://www.saucedemo.com/)

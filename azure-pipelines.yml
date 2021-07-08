@@ -137,8 +137,6 @@ stages:
         deploy:
           steps:
           - bash: |
-              sudo apt-get install software-properties-common -y
-              sudo apt-add-repository universe -y
               sudo apt-get update -y
               sudo apt-get install python3-pip -y
               sudo apt-get install unzip -y
@@ -146,11 +144,6 @@ stages:
               sudo apt-get install -y chromium-chromedriver
               python3 -m pip install --upgrade pip
               pip3 install selenium
-              python3 -V
-              pip3 -V
-              /usr/bin/chromium-browser --version
-              /usr/bin/chromedriver --version
-              python3 -c "import selenium; print('Selenium Version:', selenium.__version__)"
               # Install Log Analytics agent on Linux computers (only need to run once, comment when installed)
               # wget https://raw.githubusercontent.com/Microsoft/OMS-Agent-for-Linux/master/installer/scripts/onboard_agent.sh && sh onboard_agent.sh -w ${AZURE_LOG_ANALYTICS_ID} -s ${AZURE_LOG_ANALYTICS_PRIMARY_KEY} -d opinsights.azure.com
             env: 
@@ -171,22 +164,19 @@ stages:
           steps:
           - bash: |
               cd $(Pipeline.Workspace)/drop-selenium
-              find . -type f ! -name 'selenium-$(Build.BuildId).zip' -delete  # delete everything except 'selenium-$(Build.BuildId).zip'
               unzip -o selenium-$(Build.BuildId).zip
-              pwd
-              ls -la
+              
               sudo mkdir -p /var/log/selenium
               sudo chmod 777 /var/log/selenium
               python3 -u selenium-test.py 2>&1 | tee -a /var/log/selenium/selenium-test.log
-              # copy selenium log file to $(System.DefaultWorkingDirectory)/log/selenium/
+
               cd $(System.DefaultWorkingDirectory)
               mkdir -p log/selenium
-              pwd
+              
               sudo cp /var/log/selenium/selenium-test.log log/selenium/selenium-test.log
-              ls -la
-            displayName: Run selenium tests
+            displayName: Run Selenium tests
           - task: PublishPipelineArtifact@1
-            displayName: Publish selenium logs
+            displayName: Publish Selenium logs
             inputs:
               targetPath: '$(System.DefaultWorkingDirectory)/log/selenium/selenium-test.log'
               artifactName: 'drop-selenium-logs'
