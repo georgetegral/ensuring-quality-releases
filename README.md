@@ -203,7 +203,7 @@ If everything worked as intented, we should see "1 Linux computers connected" in
 ## Create Postman Test Suites
 For this part we will use Postman and Newman to test each endpoint of the web app available in the ```fakerestapi``` folder. We will use Postman to test the endpoints, and when we are ready we will download their definitions in .json and then use them in our project to run them using Newman in the Azure Pipeline.
 
-We created both regression tests and validation tests, and an environment to store our variables.
+We created both regression tests and validation tests, and an environment to store our variables. And we also defined the publishing of test results to Test Plans of Azure Devops.
 
 
 ## Create a Selenium test for a website

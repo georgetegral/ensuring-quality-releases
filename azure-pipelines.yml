@@ -273,13 +273,13 @@ stages:
         targetPath: '$(System.DefaultWorkingDirectory)/log/newman'
         artifactName: 'drop-newman-logs'
     - task: PublishTestResults@2
-      displayName: 'Publish Newman Test Results'
+      displayName: 'Publish Postman Test Results'
       inputs:
         testRunner: 'JUnit'
         searchFolder: '$(System.DefaultWorkingDirectory)/log/newman'
         testResultsFiles: '*.xml'
         mergeTestResults: true
-        testRunTitle: 'Publish Newman Test Results'
+        testRunTitle: 'Postman Test Results'
 
 #- stage: Destroy
 #  jobs:
