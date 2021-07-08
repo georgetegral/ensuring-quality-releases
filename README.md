@@ -257,7 +257,22 @@ In this step we will create both endurance tests and stress tests with Apache JM
 In this final section, we will enable Monitoring & Observability in our Virtual Machine and App Service to observe the effects of our tests.
 
 ### Azure Monitor
-We can set up alerts to fire when a resource meets certain conditions, we will set up an email to fire when Data Out is greater than 100 Mb.
+We can set up alerts to fire when a resource meets certain conditions, we will set up an email to fire when requests are more or equal than 10.
+
+In udacitytest-AppService, go to Monitoring and click on Alert, then + New Rule.
+
+In Condition we will select ```Requests (Platform)```, in Alert logic we will select for Operator ```Greater than or equal to``` and Threshold value as 10. Leave the rest of the configuration as is.
+
+In Actions we will add an action group, then create an action group named ```actionGroupUdacity```. In Notification we will select for Notification Type ```Email/SMS message/Push/Voice.```. We will add our email, and for name we will set it as ```emailNotification```.
+
+We will leave other configurations as is an jump to Review + Create. We will hit Create.
+
+Finally we will add our Alert Rule Details. we will set it as ```10Requests``` and leave severity as ```3 - Informational```.
+
+Finally, hit ```Create Alert Rule```
+
+The alert should show something like this:
+
 
 ### Azure Log Analytics
 As we previously configured Azure Log Analytics, we can check in the Azure Portal the outputs of the Selenium Test Suite. For this we will configure custom logs.
@@ -267,36 +282,34 @@ To configure custom logs go to your Log Analytics Workspace -> Settings -> Custo
 We will use the selenium-test.log artifact that we set up earlier in the pipeline, it must have logs similar to this:
 
 ```bash
-2021-07-08T04:16:58.5795174Z Starting the browser...
-2021-07-08T04:17:01.9176026Z 2021-07-08 04:17:01 Browser started successfully. Navigating to the demo page to login.
-2021-07-08T04:17:02.9797676Z 2021-07-08 04:17:02 Login successful with username standard_user and password secret_sauce
-2021-07-08T04:17:03.2272171Z 2021-07-08 04:17:03 Sauce Labs Bike Light added to shopping cart!
-2021-07-08T04:17:03.9743117Z 2021-07-08 04:17:03 Sauce Labs Bolt T-Shirt added to shopping cart!
-2021-07-08T04:17:04.2179768Z 2021-07-08 04:17:04 Sauce Labs Onesie added to shopping cart!
-2021-07-08T04:17:04.4816075Z 2021-07-08 04:17:04 Test.allTheThings() T-Shirt (Red) added to shopping cart!
-2021-07-08T04:17:04.7022173Z 2021-07-08 04:17:04 Sauce Labs Backpack added to shopping cart!
-2021-07-08T04:17:04.9001823Z 2021-07-08 04:17:04 Sauce Labs Fleece Jacket added to shopping cart!
-2021-07-08T04:17:04.9580612Z 2021-07-08 04:17:04 6 items added to cart successfully.
-2021-07-08T04:17:05.0924424Z 2021-07-08 04:17:05 Sauce Labs Bike Light removed from shopping cart!
-2021-07-08T04:17:05.2631917Z 2021-07-08 04:17:05 Sauce Labs Bolt T-Shirt removed from shopping cart!
-2021-07-08T04:17:05.4738932Z 2021-07-08 04:17:05 Sauce Labs Onesie removed from shopping cart!
-2021-07-08T04:17:05.6322106Z 2021-07-08 04:17:05 Test.allTheThings() T-Shirt (Red) removed from shopping cart!
-2021-07-08T04:17:05.7830434Z 2021-07-08 04:17:05 Sauce Labs Backpack removed from shopping cart!
-2021-07-08T04:17:05.9797127Z 2021-07-08 04:17:05 Sauce Labs Fleece Jacket removed from shopping cart!
-2021-07-08T04:17:06.0490478Z 2021-07-08 04:17:06 6 items removed from cart successfully.
-2021-07-08T04:17:06.0492519Z 2021-07-08 04:17:06 Selenium Tests DONE
-2021-07-08T04:17:06.4287489Z ##[section]Finishing: Run Selenium tests
+2021-07-08 05:42:26 Browser started successfully. Navigating to the demo page to login.
+2021-07-08 05:42:27 Login successful with username standard_user and password secret_sauce
+2021-07-08 05:42:28 Sauce Labs Bike Light added to shopping cart!
+2021-07-08 05:42:28 Sauce Labs Bolt T-Shirt added to shopping cart!
+2021-07-08 05:42:28 Sauce Labs Onesie added to shopping cart!
+2021-07-08 05:42:29 Test.allTheThings() T-Shirt (Red) added to shopping cart!
+2021-07-08 05:42:29 Sauce Labs Backpack added to shopping cart!
+2021-07-08 05:42:29 Sauce Labs Fleece Jacket added to shopping cart!
+2021-07-08 05:42:29 6 items added to cart successfully.
+2021-07-08 05:42:29 Sauce Labs Bike Light removed from shopping cart!
+2021-07-08 05:42:29 Sauce Labs Bolt T-Shirt removed from shopping cart!
+2021-07-08 05:42:30 Sauce Labs Onesie removed from shopping cart!
+2021-07-08 05:42:30 Test.allTheThings() T-Shirt (Red) removed from shopping cart!
+2021-07-08 05:42:30 Sauce Labs Backpack removed from shopping cart!
+2021-07-08 05:42:30 Sauce Labs Fleece Jacket removed from shopping cart!
+2021-07-08 05:42:30 6 items removed from cart successfully.
+2021-07-08 05:42:30 Selenium Tests DONE
 ```
 
 In Record delimiter we will select ```New line```.
 
-In Collection paths we will select ```Linux``` and in Path we will put the path where the logs are located, in our case ```/var/log/selenium/selenium-test.log```
+In Collection paths we will select ```Linux``` and in Path we will put the path where the logs are located, in our case ```/home/george/azagent/_work/1/s/log/selenium/selenium-test.log```
 
-In Details, we will define the Custom log name as ```SeleniumTest```.
+In Details, we will define the Custom log name as ```SeleniumTestLogs```.
 
 Finally, in Review + Create we will create the custom log.
 
-We can query it in the Logs section of Log Analytics Workspace by writing ```SeleniumTest_CL```
+We can query it in the Logs section of Log Analytics Workspace by writing ```SeleniumTestLogs_CL```
 
 ## References
 - [Udacity Project Starter Files](https://video.udacity-data.com/topher/2020/June/5ed815bf_project-starter-resources/project-starter-resources.zip)
