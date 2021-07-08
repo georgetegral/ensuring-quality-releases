@@ -279,7 +279,7 @@ As we previously configured Azure Log Analytics, we can check in the Azure Porta
 
 To configure custom logs go to your Log Analytics Workspace -> Settings -> Custom logs -> Upload sample log.
 
-We will use the selenium-test.log artifact that we set up earlier in the pipeline, it must have logs similar to this:
+We will download and use the selenium-test.log artifact that we set up earlier in the pipeline, it must have logs similar to this:
 
 ```bash
 2021-07-08 05:42:26 Browser started successfully. Navigating to the demo page to login.
@@ -311,6 +311,8 @@ Finally, in Review + Create we will create the custom log.
 
 We can query it in the Logs section of Log Analytics Workspace by writing ```SeleniumTestLogs_CL```
 
+![Custom Selenium Logs](images/seleniumlogs3.PNG)
+
 ## References
 - [Udacity Project Starter Files](https://video.udacity-data.com/topher/2020/June/5ed815bf_project-starter-resources/project-starter-resources.zip)
 - [Visual Studio Code](https://code.visualstudio.com/)
@@ -337,7 +339,7 @@ We can query it in the Logs section of Log Analytics Workspace by writing ```Sel
 - [Use secure files](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/secure-files?view=azure-devops)
 - [Create a Log Analytics workspace with Azure CLI 2.0](https://docs.microsoft.com/en-us/azure/azure-monitor/logs/quick-create-workspace-cli)
 - [Install Log Analytics agent on Linux computers](https://docs.microsoft.com/en-us/azure/azure-monitor/agents/agent-linux)
-- [Sauce Demo](#https://www.saucedemo.com/)
+- [Sauce Demo](https://www.saucedemo.com/)
 - [Running collections on the command line with Newman](https://learning.postman.com/docs/running-collections/using-newman-cli/command-line-integration-with-newman/)
 - [Dummy Rest API Example](http://dummy.restapiexample.com)
 - [Collect custom logs with Log Analytics agent in Azure Monitor](https://docs.microsoft.com/en-us/azure/azure-monitor/agents/data-sources-custom-logs)
