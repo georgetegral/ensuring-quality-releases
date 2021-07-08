@@ -174,21 +174,6 @@ We will also need a variables group, we will add the following data in a variabl
 
 We are ready to run the Provision stage of our pipeline.
 
-## Create Postman Test Suites
-For this part we will use Postman and Newman
-
-## Create a Selenium test for a website
-For the next part of the project we will explain our tests that can be found on the selenium-test.py file.
-
-First we have to create our tests and later configure them to run in "headless" mode, if you are running the file on a pc, comment this lines in the ```selenium-test.py``` file:
-```Python
-options = ChromeOptions()
-options.add_argument("--headless") 
-driver = webdriver.Chrome(options=options)
-```
-
-For this tests we used the website https://www.saucedemo.com/, we tested login, adding 6 items to cart and removing those 6 items.
-
 ## Configure Pipeline Environment
 After Terraform deploys the VM in Azure we need to manually register the Virtual Machine in Pipelines -> Environments -> TEST -> Add resource -> Virtual Machines -> Linux. Then copy the registration script and manually ssh into the virtual machine, paste it on the terminal and run it.
 
@@ -214,6 +199,24 @@ We are ready to run the Deploy stage of the pipeline!
 If everything worked as intented, we should see "1 Linux computers connected" in the Agents Management in the Log Analytics Workspace.
 
 ![1 Linux Server Connected](images/serverconnected.PNG)
+
+## Create Postman Test Suites
+For this part we will use Postman and Newman to test each endpoint of the web app available in the ```fakerestapi``` folder. We will use Postman to test the endpoints, and when we are ready we will download their definitions in .json and then use them in our project to run them using Newman in the Azure Pipeline.
+
+We created both regression tests and validation tests, and an environment to store our variables.
+
+
+## Create a Selenium test for a website
+For the next part of the project we will explain our tests that can be found on the selenium-test.py file.
+
+First we have to create our tests and later configure them to run in "headless" mode, if you are running the file on a pc, comment this lines in the ```selenium-test.py``` file:
+```Python
+options = ChromeOptions()
+options.add_argument("--headless") 
+driver = webdriver.Chrome(options=options)
+```
+
+For this tests we used the website https://www.saucedemo.com/, we tested login, adding 6 items to cart and removing those 6 items.
 
 ## References
 - [Udacity Project Starter Files](https://video.udacity-data.com/topher/2020/June/5ed815bf_project-starter-resources/project-starter-resources.zip)
@@ -242,3 +245,4 @@ If everything worked as intented, we should see "1 Linux computers connected" in
 - [Create a Log Analytics workspace with Azure CLI 2.0](https://docs.microsoft.com/en-us/azure/azure-monitor/logs/quick-create-workspace-cli)
 - [Install Log Analytics agent on Linux computers](https://docs.microsoft.com/en-us/azure/azure-monitor/agents/agent-linux)
 - [Sauce Demo](#https://www.saucedemo.com/)
+- [Running collections on the command line with Newman](https://learning.postman.com/docs/running-collections/using-newman-cli/command-line-integration-with-newman/)

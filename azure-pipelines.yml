@@ -238,8 +238,8 @@ stages:
         targetPath: '$(System.DefaultWorkingDirectory)/log/jmeter'
         artifactName: 'drop-jmeter-logs'
 
-  - job: test_newman
-    displayName: Test Postman (using Newman CLI)
+  - job: TestNewman
+    displayName: Test Postman with Newman CLI
     pool:
       vmImage: 'ubuntu-18.04'
     steps: 
@@ -252,36 +252,34 @@ stages:
         newman --version
         # create log directory
         mkdir -p log/newman
-        pwd
-        ls -la
-      displayName: Install Newman
+      displayName: Install Newman CLI
     - bash: |
-        newman run automatedtesting/postman/regression-test.json \
+        newman run automatedtesting/postman/regressionTestUdacity.json \
+                   -e automatedtesting/postman/testingenvironment.postman_environment.json \
                    --reporters cli,junit \
-                   --reporter-junit-export log/newman/regression-test.xml \
+                   --reporter-junit-export log/newman/regressionTestUdacity.xml \
                    --suppress-exit-code
-      displayName: Newman regression test
+      displayName: Run Regression Test
     - bash: |
-        newman run automatedtesting/postman/validation-test.json \
-                   -e automatedtesting/postman/validation-test-env.postman-environment.json \
+        newman run automatedtesting/postman/validationTestUdacity.json \
+                   -e automatedtesting/postman/testingenvironment.postman_environment.json \
                    --reporters cli,junit \
-                   --reporter-junit-export log/newman/validation-test.xml \
+                   --reporter-junit-export log/newman/validationTestUdacity.xml \
                    --suppress-exit-code
-        ls -la $(System.DefaultWorkingDirectory)/log/newman/
-      displayName: Newman validation test
+      displayName: Run Validation Test
     - task: PublishPipelineArtifact@1
       displayName: Publish Newman logs
       inputs:
         targetPath: '$(System.DefaultWorkingDirectory)/log/newman'
         artifactName: 'drop-newman-logs'
     - task: PublishTestResults@2
-      displayName: 'Publish Newman test results'
+      displayName: 'Publish Newman Test Results'
       inputs:
         testRunner: 'JUnit'
         searchFolder: '$(System.DefaultWorkingDirectory)/log/newman'
         testResultsFiles: '*.xml'
         mergeTestResults: true
-        testRunTitle: 'Publish Newman test results'
+        testRunTitle: 'Publish Newman Test Results'
 
 #- stage: Destroy
 #  jobs:
